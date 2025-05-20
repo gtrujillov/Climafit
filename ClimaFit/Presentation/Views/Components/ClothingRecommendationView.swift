@@ -25,7 +25,6 @@ struct ClothingRecommendationView: View {
     }
     
     private var query: String {
-        // Genera una query compuesta para buscar un outfit completo
         let base = "outfit fashion streetstyle "
         let items = recommendation.items.joined(separator: " ")
         return base + items
@@ -34,77 +33,77 @@ struct ClothingRecommendationView: View {
     var body: some View {
         VStack(spacing: 24) {
             Text(recommendation.title)
-                .font(.title2).bold()
+                .font(.title3).bold()
                 .foregroundColor(AppTheme.accent)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("Prendas sugeridas:")
+                        .padding(.bottom, 5)
+                        .font(.footnote)
+                        .foregroundColor(.primary)
+                    ForEach(recommendation.items, id: \.self) { item in
+                        HStack(spacing: 10) {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundColor(.purple)
+                            Text(item.capitalized)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                Spacer()
+            }
             if isLoading {
                 ProgressView("Buscando outfit ideal...")
                     .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accent))
                     .scaleEffect(1.2)
-            } else if let error = error {
+            } else if let error {
                 Text(error)
                     .foregroundColor(.red)
                     .multilineTextAlignment(.center)
             } else if let photo = outfitPhoto {
                 ZStack(alignment: .topTrailing) {
-                    ModernCard {
-                        ZStack(alignment: .topTrailing) {
-                            AsyncImage(url: URL(string: photo.src.portrait)) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(height: 320)
-                                        .clipped()
-                                        .cornerRadius(AppTheme.cornerRadius)
-                                        .transition(.opacity.combined(with: .scale))
-                                case .failure:
-                                    Color.gray.opacity(0.1)
-                                        .frame(height: 320)
-                                        .cornerRadius(AppTheme.cornerRadius)
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            Button(action: {
-                                if let url = URL(string: photo.url) {
-                                    UIApplication.shared.open(url)
-                                }
-                            }) {
-                                Image(systemName: "link.circle.fill")
-                                    .font(.system(size: 32))
-                                    .foregroundColor(AppTheme.accent)
-                                    .shadow(radius: 4)
-                                    .padding(12)
+                    ZStack(alignment: .topTrailing) {
+                        AsyncImage(url: URL(string: photo.src.portrait)) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 320)
+                                    .clipped()
+                                    .cornerRadius(AppTheme.cornerRadius)
+                                    .transition(.opacity.combined(with: .scale))
+                            case .failure:
+                                Color.gray.opacity(0.1)
+                                    .frame(height: 320)
+                                    .cornerRadius(AppTheme.cornerRadius)
+                            @unknown default:
+                                EmptyView()
                             }
                         }
-                        .padding(0)
+                        .frame(maxWidth: .infinity)
+                        Button(action: {
+                            if let url = URL(string: photo.url) {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            Image(systemName: "link.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(AppTheme.accent)
+                                .shadow(radius: 4)
+                                .padding(12)
+                        }
                     }
+                    .padding(0)
                     .frame(maxWidth: .infinity)
-                    .shadow(color: AppTheme.shadow, radius: 16, x: 0, y: 8)
                     .padding(.horizontal, 0)
                 }
                 .animation(.spring(response: 0.5, dampingFraction: 0.8), value: photo.id)
             }
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Prendas sugeridas:")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                ForEach(recommendation.items, id: \.self) { item in
-                    HStack(spacing: 10) {
-                        Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.purple)
-                        Text(item.capitalized)
-                            .font(.body)
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
-            .padding(.top, 8)
             NavigationLink(destination: InspirationView(query: query), isActive: $showInspiration) {
                 EmptyView()
             }
@@ -139,4 +138,13 @@ struct ClothingRecommendationView: View {
             }
         }
     }
-} 
+}
+
+struct ClothingRecommendationView_Previews: PreviewProvider {
+    static var previews: some View {
+        ClothingRecommendationView(temperature: 24)
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
+ 

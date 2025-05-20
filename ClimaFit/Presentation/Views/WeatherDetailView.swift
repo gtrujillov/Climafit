@@ -38,51 +38,50 @@ struct WeatherDetailView: View {
                         .transition(.opacity)
                     } else if let weather = viewModel.weather {
                         VStack(spacing: 28) {
-                            ModernCard {
-                                VStack(spacing: 16) {
-                                    Image(systemName: "cloud.sun.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 60, height: 60)
-                                        .foregroundColor(AppTheme.accent)
-                                        .shadow(radius: 4)
-                                        .padding(.bottom, 8)
+                            VStack(spacing: 16) {
+                                HStack {
                                     Text(weather.temperatureFormatted)
                                         .font(.system(size: 64, weight: .bold))
                                         .foregroundColor(AppTheme.accent)
                                         .transition(.scale)
-                                    Text(weather.description.capitalized)
-                                        .font(AppTheme.subtitleFont)
-                                        .foregroundColor(.primary)
+                                    Image(systemName: "cloud.sun.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(AppTheme.accent)
+                                        .shadow(radius: 4)
+                                        .padding(.bottom, 8)
                                 }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
+                                Text(weather.description.capitalized)
+                                    .font(AppTheme.subtitleFont)
+                                    .foregroundColor(.primary)
                             }
                             .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
                             .animation(.spring(), value: weather.temperatureFormatted)
-                            ModernCard {
-                                HStack(spacing: 40) {
-                                    WeatherDetailItem(
-                                        icon: "humidity.fill",
-                                        value: weather.humidityFormatted,
-                                        title: "Humedad"
-                                    )
-                                    WeatherDetailItem(
-                                        icon: "wind",
-                                        value: weather.windSpeedFormatted,
-                                        title: "Viento"
-                                    )
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 8)
+
+                            HStack {
+                                Spacer()
+                                WeatherDetailItem(
+                                    icon: "humidity.fill",
+                                    value: weather.humidityFormatted,
+                                    title: "Humedad"
+                                )
+                                Spacer()
+                                WeatherDetailItem(
+                                    icon: "wind",
+                                    value: weather.windSpeedFormatted,
+                                    title: "Viento"
+                                )
+                                Spacer()
                             }
+                            .padding(24)
+                            .background(AppTheme.cardBackground)
+                            .cornerRadius(AppTheme.cornerRadius)
+                            .shadow(color: AppTheme.shadow, radius: 12, x: 0, y: 6)
                             .frame(maxWidth: .infinity)
                             .animation(.easeInOut, value: weather.humidityFormatted)
-                            ModernCard {
-                                ClothingRecommendationView(temperature: weather.temperature)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .animation(.easeInOut, value: weather.temperature)
+                            ClothingRecommendationView(temperature: weather.temperature)
+                                .animation(.easeInOut, value: weather.temperature)
                         }
                         .frame(maxWidth: 500)
                         .padding(.bottom, 40)
@@ -114,88 +113,19 @@ struct WeatherDetailView: View {
     }
 }
 
-struct WeatherContentView: View {
-    let weather: Weather
-    
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                ModernCard {
-                    VStack(spacing: 10) {
-                        Text(weather.temperatureFormatted)
-                            .font(.system(size: 70, weight: .bold))
-                            .foregroundColor(AppTheme.accent)
-                        Text(weather.description.capitalized)
-                            .font(AppTheme.subtitleFont)
-                            .foregroundColor(.primary)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                ModernCard {
-                    HStack(spacing: 40) {
-                        WeatherDetailItem(
-                            icon: "humidity.fill",
-                            value: weather.humidityFormatted,
-                            title: "Humedad"
-                        )
-                        WeatherDetailItem(
-                            icon: "wind",
-                            value: weather.windSpeedFormatted,
-                            title: "Viento"
-                        )
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                ModernCard {
-                    ClothingRecommendationView(temperature: weather.temperature)
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .padding(.vertical, 24)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 0)
-        }
-    }
+
+extension Weather {
+    static let mock = Weather(
+        temperature: 22.0,
+        humidity: 14,
+        windSpeed: 55,
+        description: "Soleado",
+        icon: "sun.max.fill"
+    )
 }
 
-struct WeatherDetailItem: View {
-    let icon: String
-    let value: String
-    let title: String
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title)
-                .foregroundColor(AppTheme.accent)
-            Text(value)
-                .font(.title3)
-                .bold()
-                .foregroundColor(.primary)
-            Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
+struct WeatherDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        WeatherDetailView(location: CLLocation(latitude: 37.7749, longitude: -122.4194))
     }
 }
-
-struct ErrorView: View {
-    let message: String
-    let retryAction: () -> Void
-    
-    var body: some View {
-        ModernCard {
-            VStack(spacing: 20) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 50))
-                    .foregroundColor(.yellow)
-                Text("¡Ups!")
-                    .font(AppTheme.subtitleFont)
-                Text(message)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                PillButton(title: "Reintentar", action: retryAction)
-            }
-        }
-    }
-} 

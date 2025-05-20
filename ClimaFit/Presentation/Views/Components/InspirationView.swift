@@ -25,54 +25,53 @@ struct InspirationView: View {
                         .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accent))
                         .scaleEffect(1.3)
                 } else if let error = viewModel.error {
-                    ModernCard {
-                        Text(error)
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.center)
-                    }
+                    Text(error)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(RoundedRectangle(cornerRadius: AppTheme.cornerRadius).fill(AppTheme.cardBackground))
+                        .shadow(color: AppTheme.shadow, radius: 16, x: 0, y: 8)
                 } else if let photo = viewModel.selectedPhoto {
                     ZStack(alignment: .topTrailing) {
-                        ModernCard {
-                            ZStack(alignment: .topTrailing) {
-                                AsyncImage(url: URL(string: photo.src.portrait)) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(height: 340)
-                                            .clipped()
-                                            .cornerRadius(AppTheme.cornerRadius)
-                                            .transition(.opacity.combined(with: .scale))
-                                    case .failure:
-                                        Color.gray.opacity(0.1)
-                                            .frame(height: 340)
-                                            .cornerRadius(AppTheme.cornerRadius)
-                                    @unknown default:
-                                        EmptyView()
-                                    }
-                                }
-                                .frame(maxWidth: .infinity)
-                                Button(action: {
-                                    if let url = URL(string: photo.url) {
-                                        UIApplication.shared.open(url)
-                                    }
-                                }) {
-                                    Image(systemName: "link.circle.fill")
-                                        .font(.system(size: 32))
-                                        .foregroundColor(AppTheme.accent)
-                                        .shadow(radius: 4)
-                                        .padding(12)
-                                }
+                        AsyncImage(url: URL(string: photo.src.portrait)) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 340)
+                                    .clipped()
+                                    .cornerRadius(AppTheme.cornerRadius)
+                                    .transition(.opacity.combined(with: .scale))
+                            case .failure:
+                                Color.gray.opacity(0.1)
+                                    .frame(height: 340)
+                                    .cornerRadius(AppTheme.cornerRadius)
+                            @unknown default:
+                                EmptyView()
                             }
-                            .padding(0)
                         }
-                        .frame(maxWidth: 420)
-                        .shadow(color: AppTheme.shadow, radius: 16, x: 0, y: 8)
-                        .padding(.horizontal, 8)
+                        .frame(maxWidth: .infinity)
+                        Button(action: {
+                            if let url = URL(string: photo.url) {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            Image(systemName: "link.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(AppTheme.accent)
+                                .shadow(radius: 4)
+                                .padding(12)
+                        }
                     }
+                    .padding(0)
+                    .frame(maxWidth: 420)
+                    .background(RoundedRectangle(cornerRadius: AppTheme.cornerRadius).fill(AppTheme.cardBackground))
+                    .shadow(color: AppTheme.shadow, radius: 16, x: 0, y: 8)
+                    .padding(.horizontal, 8)
                     .animation(.spring(response: 0.5, dampingFraction: 0.8), value: photo.id)
                     PillButton(title: "Ver otra inspiración") {
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
@@ -81,11 +80,13 @@ struct InspirationView: View {
                     }
                     .padding(.top, 8)
                 } else {
-                    ModernCard {
-                        Text("No se encontró inspiración para tu búsqueda")
-                            .foregroundColor(.gray)
-                            .multilineTextAlignment(.center)
-                    }
+                    Text("No se encontró inspiración para tu búsqueda")
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(RoundedRectangle(cornerRadius: AppTheme.cornerRadius).fill(AppTheme.cardBackground))
+                        .shadow(color: AppTheme.shadow, radius: 16, x: 0, y: 8)
                 }
                 Spacer()
             }
