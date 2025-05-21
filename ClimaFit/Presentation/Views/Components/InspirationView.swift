@@ -16,13 +16,13 @@ struct InspirationView: View {
             VStack(spacing: 32) {
                 Text("Inspiración")
                     .font(.largeTitle).bold()
-                    .foregroundColor(AppTheme.accent)
+                    .foregroundColor(AppTheme.prussianBlue)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 20)
                 Spacer()
                 if viewModel.isLoading {
                     ProgressView("Buscando inspiración…")
-                        .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accent))
+                        .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.prussianBlue))
                         .scaleEffect(1.3)
                 } else if let error = viewModel.error {
                     Text(error)
@@ -62,7 +62,7 @@ struct InspirationView: View {
                         }) {
                             Image(systemName: "link.circle.fill")
                                 .font(.system(size: 32))
-                                .foregroundColor(AppTheme.accent)
+                                .foregroundColor(AppTheme.prussianBlue)
                                 .shadow(radius: 4)
                                 .padding(12)
                         }

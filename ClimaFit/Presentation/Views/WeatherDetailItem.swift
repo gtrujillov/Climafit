@@ -13,17 +13,19 @@ struct WeatherDetailItem: View {
     let title: String
     
     var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title)
-                .foregroundColor(AppTheme.accent)
-            Text(value)
-                .font(.title3)
-                .bold()
-                .foregroundColor(.primary)
+        VStack(spacing: 5) {
+            HStack {
+                Text(value)
+                    .font(AppTheme.carosSoftFont(.bold, size: 16))
+                    .bold()
+                    .foregroundColor(AppTheme.prussianBlue)
+                Image(systemName: icon)
+                    .font(AppTheme.carosSoftFont(.bold, size: 14))
+                    .foregroundColor(AppTheme.prussianBlue)
+            }
             Text(title)
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(AppTheme.carosSoftFont(.light, size: 12))
+                .foregroundColor(AppTheme.indigoDye1)
         }
     }
 }

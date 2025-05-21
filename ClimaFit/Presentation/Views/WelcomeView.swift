@@ -11,7 +11,7 @@ struct WelcomeView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 100, height: 100)
-                .foregroundColor(AppTheme.accent)
+                .foregroundColor(AppTheme.prussianBlue)
                 .padding(.bottom, 8)
             
             Text("Bienvenido a ClimaFit")

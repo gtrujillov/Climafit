@@ -34,7 +34,7 @@ struct ClothingRecommendationView: View {
         VStack(spacing: 24) {
             Text(recommendation.title)
                 .font(.title3).bold()
-                .foregroundColor(AppTheme.accent)
+                .foregroundColor(AppTheme.prussianBlue)
                 .frame(maxWidth: .infinity, alignment: .leading)
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
@@ -56,7 +56,7 @@ struct ClothingRecommendationView: View {
             }
             if isLoading {
                 ProgressView("Buscando outfit ideal...")
-                    .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accent))
+                    .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.prussianBlue))
                     .scaleEffect(1.2)
             } else if let error {
                 Text(error)
@@ -93,7 +93,7 @@ struct ClothingRecommendationView: View {
                         }) {
                             Image(systemName: "link.circle.fill")
                                 .font(.system(size: 32))
-                                .foregroundColor(AppTheme.accent)
+                                .foregroundColor(AppTheme.prussianBlue)
                                 .shadow(radius: 4)
                                 .padding(12)
                         }

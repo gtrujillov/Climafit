@@ -10,9 +10,22 @@
 		8FDA46432DD7670300014147 /* ClimaFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClimaFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8F3CB5692DDE5B0E0097FA0B /* Exceptions for "ClimaFit" folder in "ClimaFit" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8FDA46422DD7670300014147 /* ClimaFit */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8FDA46452DD7670300014147 /* ClimaFit */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F3CB5692DDE5B0E0097FA0B /* Exceptions for "ClimaFit" folder in "ClimaFit" target */,
+			);
 			path = ClimaFit;
 			sourceTree = "<group>";
 		};
@@ -257,6 +270,7 @@
 				DEVELOPMENT_TEAM = 7NG47J22FX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ClimaFit/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Necesitamos tu ubicación incluso en segundo plano para mostrarte el clima y recomendaciones.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Necesitamos tu ubicación para mostrarte el clima actual y recomendaciones de ropa.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -290,6 +304,7 @@
 				DEVELOPMENT_TEAM = 7NG47J22FX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ClimaFit/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Necesitamos tu ubicación incluso en segundo plano para mostrarte el clima y recomendaciones.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Necesitamos tu ubicación para mostrarte el clima actual y recomendaciones de ropa.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

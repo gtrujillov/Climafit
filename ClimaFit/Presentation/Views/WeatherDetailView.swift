@@ -3,63 +3,53 @@ import CoreLocation
 
 struct WeatherDetailView: View {
     @StateObject private var viewModel: WeatherViewModel
-    let location: CLLocation
+    let initialLocation: CLLocation
+    
     @State private var placeName: String = ""
+    @State private var placeSearchText: String = ""
     
     init(location: CLLocation) {
-        self.location = location
+        self.initialLocation = location
         let weatherAPI = WeatherAPI(apiKey: Config.openWeatherAPIKey)
         _viewModel = StateObject(wrappedValue: WeatherViewModel(weatherAPI: weatherAPI))
     }
     
     var body: some View {
         ZStack {
-            AppTheme.background.ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 32) {
-                    if !placeName.isEmpty {
-                        Text(placeName)
-                            .font(AppTheme.subtitleFont)
-                            .foregroundColor(.primary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 24)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .scaleEffect(1.5)
-                            .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accent))
-                            .padding(.vertical, 80)
-                    } else if let error = viewModel.error {
-                        ErrorView(message: error) {
-                            viewModel.fetchWeather(for: location)
-                        }
-                        .padding(.vertical, 40)
-                        .transition(.opacity)
-                    } else if let weather = viewModel.weather {
-                        VStack(spacing: 28) {
-                            VStack(spacing: 16) {
-                                HStack {
-                                    Text(weather.temperatureFormatted)
-                                        .font(.system(size: 64, weight: .bold))
-                                        .foregroundColor(AppTheme.accent)
-                                        .transition(.scale)
-                                    Image(systemName: "cloud.sun.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .foregroundColor(AppTheme.accent)
-                                        .shadow(radius: 4)
-                                        .padding(.bottom, 8)
-                                }
-                                Text(weather.description.capitalized)
-                                    .font(AppTheme.subtitleFont)
+                    // Show place name if available
+                    if let weather = viewModel.weather {
+                        if !placeName.isEmpty {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Ubicación")
+                                    .font(AppTheme.carosSoftFont(.light, size: 16))
                                     .foregroundColor(.primary)
+                                    .transition(.move(edge: .top).combined(with: .opacity))
+                                Text(placeName)
+                                    .font(AppTheme.carosSoftFont(.bold, size: 16))
+                                    .foregroundColor(.primary)
+                                    .transition(.move(edge: .top).combined(with: .opacity))
                             }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .animation(.spring(), value: weather.temperatureFormatted)
-
-                            HStack {
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        
+                        VStack(spacing: 10) {
+                            HStack(spacing: 20) {
+                                Text(weather.temperatureFormatted)
+                                    .font(AppTheme.carosSoftFont(.bold, size: 54))
+                                    .foregroundColor(AppTheme.prussianBlue)
+                                Image(systemName: "sun.max.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 48, height: 48)
+                                    .foregroundColor(AppTheme.prussianBlue)
+                                    .shadow(radius: 2)
+                            }
+                            Text(weather.description.capitalized)
+                                .font(AppTheme.carosSoftFont(.regular, size: 14))
+                                .foregroundColor(.secondary)
+                            HStack(spacing: 24) {
                                 Spacer()
                                 WeatherDetailItem(
                                     icon: "humidity.fill",
@@ -74,32 +64,33 @@ struct WeatherDetailView: View {
                                 )
                                 Spacer()
                             }
-                            .padding(24)
+                            .padding(10)
                             .background(AppTheme.cardBackground)
                             .cornerRadius(AppTheme.cornerRadius)
                             .shadow(color: AppTheme.shadow, radius: 12, x: 0, y: 6)
                             .frame(maxWidth: .infinity)
-                            .animation(.easeInOut, value: weather.humidityFormatted)
-                            ClothingRecommendationView(temperature: weather.temperature)
-                                .animation(.easeInOut, value: weather.temperature)
                         }
-                        .frame(maxWidth: 500)
-                        .padding(.bottom, 40)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        
+                        // Search bar always visible
+                        SearchBarView(searchText: $placeSearchText)
+                            .onSubmit {
+                                searchLocationAndFetchWeather(for: placeSearchText)
+                            }
+                        
+                        ClothingRecommendationView(temperature: weather.temperature)
+                            .animation(.easeInOut, value: weather.temperature)
                     }
                 }
-                .padding(.horizontal, 24)
-                .frame(maxWidth: .infinity)
-                .animation(.easeInOut, value: viewModel.weather?.temperatureFormatted)
+                .padding()
             }
-        }
-        .onAppear {
-            viewModel.fetchWeather(for: location)
-            fetchPlaceName(for: location)
+            .onAppear {
+                viewModel.fetchWeather(for: initialLocation)
+                fetchPlaceName(for: initialLocation)
+            }
         }
     }
     
-    private func fetchPlaceName(for location: CLLocation) {
+    func fetchPlaceName(for location: CLLocation) {
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location) { placemarks, error in
             if let city = placemarks?.first?.locality {
@@ -111,9 +102,20 @@ struct WeatherDetailView: View {
             }
         }
     }
+    
+    func searchLocationAndFetchWeather(for place: String) {
+        guard !place.isEmpty else { return }
+        
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(place) { placemarks, error in
+            if let location = placemarks?.first?.location {
+                placeName = place.capitalized
+                viewModel.fetchWeather(for: location)
+            }
+        }
+    }
 }
-
-
+    
 extension Weather {
     static let mock = Weather(
         temperature: 22.0,
@@ -123,7 +125,7 @@ extension Weather {
         icon: "sun.max.fill"
     )
 }
-
+    
 struct WeatherDetailView_Previews: PreviewProvider {
     static var previews: some View {
         WeatherDetailView(location: CLLocation(latitude: 37.7749, longitude: -122.4194))

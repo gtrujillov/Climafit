@@ -17,10 +17,10 @@ struct WeatherContentView: View {
                 VStack(spacing: 10) {
                     Text(weather.temperatureFormatted)
                         .font(.system(size: 70, weight: .bold))
-                        .foregroundColor(AppTheme.accent)
+                        .foregroundColor(AppTheme.prussianBlue)
                     Text(weather.description.capitalized)
                         .font(AppTheme.subtitleFont)
-                        .foregroundColor(.primary)
+                        .foregroundColor(AppTheme.indigoDye3)
                 }
                 .padding()
                 HStack(spacing: 40) {
@@ -42,11 +42,5 @@ struct WeatherContentView: View {
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 0)
         }
-    }
-}
-
-struct WeatherContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        WeatherContentView(weather: Weather.mock)
     }
 }

@@ -10,9 +10,9 @@ struct PillButton: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 36)
                 .padding(.vertical, 16)
-                .background(AppTheme.accent)
+                .background(AppTheme.prussianBlue)
                 .clipShape(Capsule())
-                .shadow(color: AppTheme.accent.opacity(0.10), radius: 8, x: 0, y: 4)
+                .shadow(color: AppTheme.prussianBlue.opacity(0.10), radius: 8, x: 0, y: 4)
         }
     }
 } 
