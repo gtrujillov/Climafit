@@ -8,10 +8,13 @@ struct WeatherDetailView: View {
     @State private var placeName: String = ""
     @State private var placeSearchText: String = ""
     
-    init(location: CLLocation) {
+    init(
+        location: CLLocation
+    ) {
         self.initialLocation = location
         let weatherAPI = WeatherAPI(apiKey: Config.openWeatherAPIKey)
-        _viewModel = StateObject(wrappedValue: WeatherViewModel(weatherAPI: weatherAPI))
+        let searchUseCase = DefaultSearchCityUseCase()
+        _viewModel = StateObject(wrappedValue: WeatherViewModel(weatherAPI: weatherAPI, searchCityUseCase: searchUseCase))
     }
     
     var body: some View {
@@ -74,7 +77,7 @@ struct WeatherDetailView: View {
                         // Search bar always visible
                         SearchBarView(searchText: $placeSearchText)
                             .onSubmit {
-                                searchLocationAndFetchWeather(for: placeSearchText)
+                                viewModel.performSearch()
                             }
                         
                         ClothingRecommendationView(temperature: weather.temperature)
@@ -99,18 +102,6 @@ struct WeatherDetailView: View {
                 placeName = name
             } else {
                 placeName = "Ubicación desconocida"
-            }
-        }
-    }
-    
-    func searchLocationAndFetchWeather(for place: String) {
-        guard !place.isEmpty else { return }
-        
-        let geocoder = CLGeocoder()
-        geocoder.geocodeAddressString(place) { placemarks, error in
-            if let location = placemarks?.first?.location {
-                placeName = place.capitalized
-                viewModel.fetchWeather(for: location)
             }
         }
     }

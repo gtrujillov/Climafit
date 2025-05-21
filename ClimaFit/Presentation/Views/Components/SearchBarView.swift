@@ -9,18 +9,22 @@ import SwiftUI
 
 struct SearchBarView: View {
     @Binding var searchText: String
-    var placeholder: String = "Search city..."
+    var placeholder: String = "Buscar ciudad..."
+    var onSubmit: (() -> Void)? = nil
     
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
-
+            
             TextField(placeholder, text: $searchText)
                 .textInputAutocapitalization(.words)
                 .disableAutocorrection(true)
                 .submitLabel(.search)
-
+                .onSubmit {
+                    onSubmit?()
+                }
+            
             if !searchText.isEmpty {
                 Button(action: {
                     searchText = ""
@@ -36,7 +40,6 @@ struct SearchBarView: View {
         .shadow(color: AppTheme.shadow, radius: 12, x: 0, y: 6)
     }
 }
-
 #Preview {
     SearchBarView(searchText: .constant(""))
 }

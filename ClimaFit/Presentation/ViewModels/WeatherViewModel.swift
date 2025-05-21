@@ -3,17 +3,27 @@ import Combine
 import CoreLocation
 
 class WeatherViewModel: ObservableObject {
+    // MARK: - Published properties
     @Published var weather: Weather?
     @Published var isLoading = false
     @Published var error: String?
+    @Published var searchText: String = ""
     
+    // MARK: - Dependencies
     private let weatherAPI: WeatherAPIProtocol
+    private let searchCityUseCase: SearchCityUseCase
     private var cancellables = Set<AnyCancellable>()
     
-    init(weatherAPI: WeatherAPIProtocol) {
+    // MARK: - Init
+    init(
+        weatherAPI: WeatherAPIProtocol,
+        searchCityUseCase: SearchCityUseCase
+    ) {
         self.weatherAPI = weatherAPI
+        self.searchCityUseCase = searchCityUseCase
     }
     
+    // MARK: - Public methods
     func fetchWeather(for location: CLLocation) {
         isLoading = true
         error = nil
@@ -34,4 +44,24 @@ class WeatherViewModel: ObservableObject {
         }
         .store(in: &cancellables)
     }
-} 
+    
+    func performSearch() {
+        guard !searchText.isEmpty else { return }
+        isLoading = true
+        error = nil
+        
+        Task {
+            do {
+                let location = try await searchCityUseCase.execute(city: searchText)
+                await MainActor.run {
+                    self.fetchWeather(for: location)
+                }
+            } catch {
+                await MainActor.run {
+                    self.isLoading = false
+                    self.error = "No se pudo encontrar la ciudad."
+                }
+            }
+        }
+    }
+}
