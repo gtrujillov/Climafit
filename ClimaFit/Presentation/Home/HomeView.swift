@@ -24,7 +24,7 @@ struct HomeView: View {
                             Image(systemName: "location.fill")
                                 .foregroundColor(AppTheme.primaryBrown)
                                 .font(.system(size: 16))
-                            Text(viewModel.place)
+                            Text(viewModel.weather?.name ?? "-")
                                 .font(AppTheme.regularFont(size: .subheadline))
                         }
                     }
@@ -32,9 +32,9 @@ struct HomeView: View {
                 }
                 VStack(spacing: -4) {
                     HStack {
-                        Text(viewModel.temperature)
+                        Text(viewModel.weather?.temperatureFormatted ?? "0.0º")
                             .font(AppTheme.boldFont(size: .largeTitle))
-                        if let url = viewModel.iconUrl {
+                        if let url = viewModel.weather?.iconURL {
                             AsyncImage(url: url) { image in
                                 image.resizable()
                             } placeholder: {
@@ -43,7 +43,7 @@ struct HomeView: View {
                             .frame(width: 70, height: 70)
                         }
                     }
-                    Text(viewModel.weatherDescription)
+                    Text(viewModel.weather?.description ?? viewModel.weatherDescription)
                         .font(AppTheme.regularFont(size: .small))
                 }
                 Spacer()

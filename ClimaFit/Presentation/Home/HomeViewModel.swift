@@ -10,10 +10,8 @@ import CoreLocation
 
 @MainActor
 final class HomeViewModel: ObservableObject {
-    @Published var weatherDescription: String = "Cargando..."
-    @Published var temperature: String = "0.0"
-    @Published var place: String = "-"
-    @Published var iconUrl: URL? = nil
+    @Published var weather: Weather?
+    @Published var weatherDescription: String = ""
     
     private let getLocationUseCase: GetLocationUseCase
     private let getWeatherUseCase: GetWeatherUseCase
@@ -24,14 +22,13 @@ final class HomeViewModel: ObservableObject {
     }
 
     func onAppear() {
+        guard (weather != nil) else {
+            return
+        }
         Task {
             do {
                 if let location = try await getLocationUseCase.execute() {
-                    let weather = await getWeatherUseCase.execute(lat: location.latitude, lon: location.longitude)
-                    self.weatherDescription = weather.description
-                    self.temperature = weather.temperatureFormatted
-                    self.place = weather.name
-                    self.iconUrl = weather.iconURL
+                    self.weather = await getWeatherUseCase.execute(lat: location.latitude, lon: location.longitude)
                 } else {
                     self.weatherDescription = "No se pudo obtener la ubicación"
                 }
