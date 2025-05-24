@@ -31,10 +31,14 @@ struct HomeCoordinatorImpl: HomeCoordinator {
         // Caso de uso para obtener ubicación
         let getLocationUseCase = GetLocationUseCaseImpl(repository: locationRepository)
         
+        // Caso de uso para obtener recomendación de ropa
+        let getClothingRecommendationUseCase = GetClothingRecommendationUseCaseImpl()
+        
         // ViewModel con ambos casos de uso
         let viewModel = HomeViewModel(
             getLocationUseCase: getLocationUseCase,
-            getWeatherUseCase: getWeatherUseCase
+            getWeatherUseCase: getWeatherUseCase,
+            getClothingRecomentadionUseCase: getClothingRecommendationUseCase
         )
         
         return AnyView(HomeView(viewModel: viewModel))

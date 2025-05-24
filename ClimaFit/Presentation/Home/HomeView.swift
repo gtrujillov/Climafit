@@ -10,12 +10,18 @@ import CoreLocation
 
 struct HomeView: View {
     @ObservedObject var viewModel: HomeViewModel
+    @State private var selectedClothingCategory: String? = nil
+
+    private var clothingItems: [Dictionary<String, String>.Element] {
+        viewModel.clothingRecommendation?.clothCategory.map { $0 } ?? []
+    }
 
     var body: some View {
         ZStack {
             AppTheme.background.ignoresSafeArea(edges: .all)
 
             VStack(spacing: 16) {
+                //MARK: - Location section
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Ubicación")
@@ -30,6 +36,7 @@ struct HomeView: View {
                     }
                     Spacer()
                 }
+                //MARK: - Weather section
                 VStack(spacing: -4) {
                     HStack {
                         Text(viewModel.weather?.temperatureFormatted ?? "0.0º")
@@ -46,6 +53,32 @@ struct HomeView: View {
                     Text(viewModel.weather?.description ?? viewModel.weatherDescription)
                         .font(AppTheme.regularFont(size: .small))
                 }
+                //MARK: - Recomendation section
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Recomendaciones")
+                            .font(AppTheme.regularFont(size: .subheadline))
+                        Text(viewModel.clothingRecommendation?.summary ?? "")
+                            .font(AppTheme.thinFont(size: .callout))
+                        
+                        //MARK: - Categories
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(clothingItems, id: \.key) { item in
+                                    ClothingCategoryItemView(
+                                        iconName: item.value,
+                                        onTap: {
+                                            print("Seleccionaste \(item.key)")
+                                        }
+                                    )
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.top, 24)
                 Spacer()
             }
             .padding()
@@ -54,19 +87,6 @@ struct HomeView: View {
             }
         }
     }
-}
-
-private struct MockGetLocationUseCase: GetLocationUseCase {
-    func execute() async throws -> CLLocationCoordinate2D? {
-        CLLocationCoordinate2D(latitude: 40.123432452, longitude: -3.3243534)
-    }
-}
-
-#Preview {
-    let mockLocationUseCase = MockGetLocationUseCase()
-    let mockUseCase = MockGetWeatherUseCase()
-    let viewModel = HomeViewModel(getLocationUseCase: mockLocationUseCase, getWeatherUseCase: mockUseCase)
-    HomeView(viewModel: viewModel)
 }
 
 // MARK: - Mock para Preview
@@ -82,4 +102,30 @@ private struct MockGetWeatherUseCase: GetWeatherUseCase {
             name: "Lisboa"
         )
     }
+}
+
+private struct MockGetLocationUseCase: GetLocationUseCase {
+    func execute() async throws -> CLLocationCoordinate2D? {
+        CLLocationCoordinate2D(latitude: 40.123432452, longitude: -3.3243534)
+    }
+}
+
+private struct MockGetClothingRecommendationUseCase: GetClothingRecommendationUseCase {
+    func execute(temperature: Double) -> ClothingRecommendation {
+        return ClothingRecommendation(
+            summary: "Ropa ligera, hace calor.",
+            clothCategory: [
+                "camiseta": "tshirt",
+                "pantalón corto": "shorts",
+                "gafas de sol": "sun.max.fill"
+            ]
+        )
+    }
+}
+
+#Preview {
+    let mockLocationUseCase = MockGetLocationUseCase()
+    let mockUseCase = MockGetWeatherUseCase()
+    let viewModel = HomeViewModel(getLocationUseCase: mockLocationUseCase, getWeatherUseCase: mockUseCase, getClothingRecomentadionUseCase: MockGetClothingRecommendationUseCase())
+    HomeView(viewModel: viewModel)
 }
